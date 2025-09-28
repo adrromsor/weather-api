@@ -1,0 +1,12 @@
+__pycache__/
+*.pyc
+.env
+env/
+DS_Store
+.coverage
+.vscode/
+idea/
+logs/
+*.log
+build
+tmp
