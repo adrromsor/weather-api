@@ -7,17 +7,17 @@ The API exposes a unified and typed interface so clients don’t need to deal wi
 
 Clone the repo:
 
->git clone https://github.com/adrromsor/weather-api.git<br>
+<code>git clone https://github.com/adrromsor/weather-api.git</code><br>
 
 Install dependencies using uv:
 
->uv sync
+<code>uv sync</code>
 
 ## ▶️ Running the app
 
 Run with Uvicorn:
 
->uv run uvicorn src.weather.api.main:app --reload
+<code>uv run uvicorn src.weather.api.main:app --reload</code>
 
 The API will be available at:
 
