@@ -1,6 +1,8 @@
 from datetime import datetime
+
 from fastapi import status
 from fastapi.testclient import TestClient
+
 from src.weather.api.main import app
 
 client = TestClient(app)

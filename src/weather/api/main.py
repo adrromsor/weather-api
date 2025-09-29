@@ -1,4 +1,5 @@
 from fastapi import FastAPI
+
 from src.weather.api.routers import health
 
 
