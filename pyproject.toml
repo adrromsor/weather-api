@@ -12,6 +12,8 @@ dependencies = [
 dev = [
     "pytest",
     "httpx",
+    "ruff",
+    "ty",
 ]
 
 [tool.pytest.ini_options]
