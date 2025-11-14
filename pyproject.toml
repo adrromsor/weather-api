@@ -5,12 +5,14 @@ readme = "README.md"
 requires-python = "==3.13.*"
 dependencies = [
     "fastapi[standard]",
+    "pydantic-settings",
     "uvicorn",
 ]
 
 [dependency-groups]
 dev = [
     "pytest",
+    "pytest-asyncio",
     "httpx",
     "ruff",
     "ty",

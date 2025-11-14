@@ -5,12 +5,15 @@ from src.weather.application.get_weather.get_weather_query import GetWeatherQuer
 from src.weather.application.get_weather.get_weather_query_handler import (
     GetWeatherQueryHandler,
 )
-from src.weather.infrastructure.in_memory_weather_repository import (
-    InMemoryWeatherRepository,
+from src.weather.domain.weather_location_not_found_error import (
+    WeatherLocationNotFoundError,
+)
+from src.weather.infrastructure.visual_crossing_weather_repository import (
+    VisualCrossingWeatherRepository,
 )
 
 router = APIRouter(prefix="/api", tags=["Weather"])
-weather_repository = InMemoryWeatherRepository()
+weather_repository = VisualCrossingWeatherRepository()
 
 
 class WeatherResponse(BaseModel):
@@ -30,13 +33,11 @@ async def get_weather(
     handler: GetWeatherQueryHandler = Depends(get_weather_query_handler),
 ) -> WeatherResponse:
     query = GetWeatherQuery(location)
-    result = await handler.execute(query)
 
-    if not result:
-        raise HTTPException(
-            status_code=status.HTTP_404_NOT_FOUND,
-            detail=f"Weather report not found for location: {location}",
-        )
+    try:
+        result = await handler.execute(query)
+    except WeatherLocationNotFoundError as error:
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail=str(error))
 
     return WeatherResponse(
         location=result.location,
