@@ -1,7 +1,6 @@
-from fastapi import APIRouter, Depends, HTTPException, status
+from fastapi import APIRouter, Depends, HTTPException, Request, status
 from pydantic import BaseModel
 
-from src.shared.redis_client import get_redis_client
 from src.weather.application.get_weather.get_weather_query import GetWeatherQuery
 from src.weather.application.get_weather.get_weather_query_handler import (
     GetWeatherQueryHandler,
@@ -9,16 +8,9 @@ from src.weather.application.get_weather.get_weather_query_handler import (
 from src.weather.domain.weather_location_not_found_error import (
     WeatherLocationNotFoundError,
 )
-from src.weather.infrastructure.redis_weather_repository import RedisWeatherRepository
-from src.weather.infrastructure.visual_crossing_weather_repository import (
-    VisualCrossingWeatherRepository,
-)
+from src.weather.domain.weather_repository import WeatherRepository
 
 router = APIRouter(prefix="/api", tags=["Weather"])
-
-weather_repository = RedisWeatherRepository(
-    client=get_redis_client(), source_repository=VisualCrossingWeatherRepository()
-)
 
 
 class WeatherResponse(BaseModel):
@@ -28,8 +20,14 @@ class WeatherResponse(BaseModel):
     last_updated: str
 
 
-def get_weather_query_handler() -> GetWeatherQueryHandler:
-    return GetWeatherQueryHandler(weather_repository)
+def get_weather_repository(request: Request) -> WeatherRepository:
+    return request.app.state.weather_repository
+
+
+def get_weather_query_handler(
+    repository: WeatherRepository = Depends(get_weather_repository),
+) -> GetWeatherQueryHandler:
+    return GetWeatherQueryHandler(repository)
 
 
 @router.get("/weather/{location}", status_code=status.HTTP_200_OK)
