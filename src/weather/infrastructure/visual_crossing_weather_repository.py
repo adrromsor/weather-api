@@ -2,7 +2,7 @@ import logging
 from datetime import datetime, timezone
 from typing import Any
 
-import httpx
+from httpx import AsyncClient, AsyncHTTPTransport, HTTPError
 
 from src.config import settings
 from src.weather.domain.weather import Weather
@@ -15,19 +15,22 @@ logger = logging.getLogger(__name__)
 
 
 class VisualCrossingWeatherRepository(WeatherRepository):
-    _BASE_URL = "https://weather.visualcrossing.com/VisualCrossingWebServices/rest/services/timeline"
-
-    def __init__(self, api_key: str = settings.VISUAL_CROSSING_API_KEY):
+    def __init__(
+        self,
+        api_key: str = settings.VISUAL_CROSSING_API_KEY,
+        base_url: str = settings.VISUAL_CROSSING_BASE_URL,
+    ):
         self._api_key = api_key
-        self._transport = httpx.AsyncHTTPTransport(retries=3)
+        self._base_url = base_url
+        self._transport = AsyncHTTPTransport(retries=3)
 
     async def get_weather(self, location: str) -> Weather | None:
         if not self._api_key:
             logger.warning("No Visual Crossing API key provided.")
             return None
         try:
-            async with httpx.AsyncClient(
-                base_url=self._BASE_URL, transport=self._transport, timeout=10.0
+            async with AsyncClient(
+                base_url=self._base_url, transport=self._transport, timeout=10.0
             ) as client:
                 response = await client.get(
                     f"/{location}",
@@ -46,7 +49,7 @@ class VisualCrossingWeatherRepository(WeatherRepository):
 
                 return self._map_to_domain(data)
 
-        except httpx.HTTPError as e:
+        except HTTPError as e:
             logger.error(f"HTTP error communicating with Visual Crossing: {e}")
             raise
         except WeatherLocationNotFoundError:
