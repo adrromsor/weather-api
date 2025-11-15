@@ -16,7 +16,7 @@ from src.weather.infrastructure.in_memory_weather_repository import (
 async def test_should_return_current_weather() -> None:
     repository = InMemoryWeatherRepository()
     handler = GetWeatherQueryHandler(repository=repository)
-    query = GetWeatherQuery(location="London")
+    query = GetWeatherQuery(location="london")
 
     result = await handler.execute(query)
 

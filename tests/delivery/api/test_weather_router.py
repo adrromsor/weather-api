@@ -7,13 +7,15 @@ client = TestClient(app)
 
 
 def test_weather_router() -> None:
-    location = "London"
-    response = client.get(f"/api/weather/{location}")
-    data = response.json()
+    location = "london"
 
-    assert response.status_code == status.HTTP_200_OK
-    assert data["location"] == location
-    assert "temperature" in data
-    assert isinstance(data["temperature"], float)
-    assert "condition" in data
-    assert "last_updated" in data
+    with TestClient(app) as client:
+        response = client.get(f"/api/weather/{location}")
+        data = response.json()
+
+        assert response.status_code == status.HTTP_200_OK
+        assert data["location"] == location
+        assert "temperature" in data
+        assert isinstance(data["temperature"], float)
+        assert "condition" in data
+        assert "last_updated" in data
