@@ -26,8 +26,8 @@ class VisualCrossingWeatherRepository(WeatherRepository):
 
     async def get_weather(self, location: str) -> Weather | None:
         if not self._api_key:
-            logger.warning("No Visual Crossing API key provided.")
-            return None
+            logger.critical("VISUAL_CROSSING_API_KEY is not set!")
+            raise Exception("Weather service API key is missing.")
         try:
             async with AsyncClient(
                 base_url=self._base_url, transport=self._transport, timeout=10.0

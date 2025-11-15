@@ -1,4 +1,4 @@
-from dataclasses import dataclass
+from dataclasses import asdict, dataclass
 from typing import Self
 
 
@@ -19,3 +19,6 @@ class Weather:
             condition=condition,
             last_updated=last_updated,
         )
+
+    def to_primitives(self) -> dict:
+        return asdict(self)
