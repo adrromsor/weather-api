@@ -2,10 +2,8 @@ from redis.asyncio import Redis
 
 from src.config import settings
 
-_redis_client = Redis(
-    host=settings.REDIS_HOST,
-    port=settings.REDIS_PORT,
-    db=0,
+_redis_client = Redis.from_url(
+    settings.REDIS_URL,
     decode_responses=True,
 )
 
